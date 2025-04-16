@@ -1,0 +1,62 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+q = 1.6e-19  # Charge in coulombs
+m = 1.7e-27  # Mass in kg
+B = np.array([0, 0, -1e-6])  # Magnetic field in Tesla
+v_0 = np.array([1, 0, 0])  # Initial velocity in m/s
+x_0 = np.array([0, 0, 0])  # Initial position in meters
+dt = 1e-6  # Time step in seconds (1 ms)
+T = 100e-3  # Total time in seconds
+
+# Initialize time, position, velocity
+t = 0
+x = x_0
+v = v_0
+
+# Store position for plotting
+positions = []
+
+# Function for cross product (acceleration due to magnetic force)
+def acceleration(v, B, q, m):
+    return q / m * np.cross(v, B)
+
+# Simulation loop for time t = 1 ms to 5 ms (using 1 ms time step)
+while t < T:
+    # Calculate the acceleration at current velocity
+    a = acceleration(v, B, q, m)
+    
+    # Update velocity for next time step based on current acceleration
+    v_new = v + a * dt
+    
+    # Update position based on current velocity
+    x_new = x + v * dt
+    
+    # Increment time
+    t += dt
+    
+    # Append position to the list for plotting
+    positions.append(x_new)
+    
+    # Print the results with time adjusted to ms
+    #print(f"t = {t * 1e3:.0f} ms, Position = ({x_new[0]:.3e}, {x_new[1]:.3e}, {x_new[2]:.3e}) m, "
+     #    f"Velocity = ({v_new[0]:.3e}, {v_new[1]:.3e}, {v_new[2]:.3e}) m/s")
+    
+    # Update the velocity and position for the next iteration
+    v = v_new
+    x = x_new
+
+# Convert positions to a numpy array for easier plotting
+positions = np.array(positions)
+
+# Plot the particle's trajectory in the x-y plane
+plt.figure(figsize=(6,6))
+plt.plot(positions[:,0], positions[:,1], label="Trajectory")
+plt.title("Trajectory of Charged Particle in Magnetic Field")
+plt.xlabel("x Position (m)")
+plt.ylabel("y Position (m)")
+plt.grid(True)
+plt.axis('equal')
+plt.legend()
+plt.show()
